@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaulltx - Bocetos HD a Lápiz</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .avatar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar-img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
+            background-color: #ffffff;
+        }
+
+        .field-group {
+            margin-bottom: 12px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .field-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+
+        .field-value {
+            flex: 1;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            word-break: break-all;
+        }
+
+        .field-value.bio {
+            white-space: pre-line;
+            line-height: 1.35;
+            font-size: 0.9rem;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .btn-copy {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .btn-copy:hover {
+            background-color: var(--card-border);
+            color: var(--text-main);
+        }
+
+        .btn-action-special {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+        }
+
+        .btn-action-special:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-generate:hover {
+            background: linear-gradient(135deg, var(--primary-hover), #9333ea);
+        }
+
+        .btn-copy-all {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-copy-all:hover {
+            background-color: var(--card-border);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Vaulltx Generator</h1>
+            <p>Bocetos HD estilo lápiz y grafito (PNG)</p>
+        </header>
+
+        <main class="card" id="identityCard">
+            
+            <div class="avatar-container">
+                <img id="valAvatar" class="avatar-img" src="" alt="Boceto a Lápiz HD" onerror="handleImageError(this)">
+            </div>
+
+            <div class="field-group">
+                <span class="field-label">Nombre Completo</span>
+                <div class="field-content">
+                    <span class="field-value" id="valName">Cargando...</span>
+                    <button class="btn-copy" onclick="copyField('valName', this)">📋</button>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <span class="field-label">Usuario Instagram (Sin @)</span>
+                <div class="field-content">
+                    <span class="field-value" id="valUsername">Cargando...</span>
+                    <button class="btn-copy" onclick="copyField('valUsername', this)">📋</button>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <span class="field-label">Fecha de Nacimiento</span>
+                <div class="field-content">
+                    <span class="field-value" id="valDob">Cargando...</span>
+                    <button class="btn-copy btn-action-special" onclick="recalculateDobOnly()">🎲 Variar Fecha</button>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <span class="field-label">Biografía (Humana)</span>
+                <div class="field-content">
+                    <span class="field-value bio" id="valBio">Cargando...</span>
+                    <button class="btn-copy" onclick="copyField('valBio', this)">📋 Copiar Bio</button>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-generate" onclick="generateIdentity()">✨ Generar Nuevo Boceto</button>
+                <button class="btn-copy-all" id="btnCopyAll" onclick="copyAll()">📋 Copiar Perfil Completo</button>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const maleNames = ["Aarav", "Rohan", "Vihaan", "Aditya", "Kabir", "Arjun", "Sai", "Reyansh", "Muhammad", "Ayaan", "Krishna", "Ishaan", "Shaurya", "Atharva", "Dhruv", "Rudra", "Dev", "Aryan", "Aman", "Rahul", "Karan", "Siddharth", "Vikram", "Amit", "Rajesh", "Varun", "Yash", "Gaurav", "Nikhil", "Pranav", "Rishabh", "Akash", "Manish", "Kartik"];
+        const femaleNames = ["Ananya", "Aadhya", "Diya", "Saanvi", "Kiara", "Priya", "Riya", "Isha", "Kavya", "Anushka", "Avani", "Myra", "Aaliyah", "Khushi", "Aarohi", "Neha", "Pooja", "Priti", "Shreya", "Siddhi", "Sneha", "Tanvi", "Meera", "Aditi", "Tara", "Nisha", "Swati", "Roshni", "Deepika", "Kritika"];
+        const lastNames = ["Sharma", "Verma", "Gupta", "Mehta", "Singh", "Kumar", "Patel", "Shah", "Joshi", "Kapoor", "Malhotra", "Bhatia", "Reddy", "Nair", "Rao", "Iyer", "Deshmukh", "Chowdhury", "Das", "Banerjee", "Kulkarni", "Patil", "Agarwal", "Saxena", "Sinha", "Mishra", "Pandey"];
+
+        const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+        const humanBios = [
+            "✨ Viviendo un día a la vez\n📍 Mumbai / Delhi\n☕ Amante del café y buenas fotos",
+            "🎓 Estudiante | 🎨 Creativo independiente\nDonde las palabras fallan, la música habla 🎧",
+            "📸 Amante de los viajes y la fotografía\nExplorando rincones mágicos ✨\n📩 DMs abiertos",
+            "💻 Entusiasta de la tecnología & Arte digital\nNo acepto malas vibras 🌿",
+            "🌸 Amante de los atardeceres y libros viejos\nCreando recuerdos que duren para siempre 💫",
+            "💪 En busca de mi mejor versión\n🏋️‍♂️ Fit & Healthy lifestyle\nHaz que valga la pena.",
+            "✈️ Trotamundos | 🍜 Foodie de corazón\nCapturando los pequeños detalles de la vida 📍",
+            "✨ Sonríe, es gratis :)\n🎨 Diseñador gráfico & Soñador a tiempo completo",
+            "🌙 Soñador nocturno | ☕ Cafeína en las venas\nLa vida es corta, haz lo que te haga feliz",
+            "🍃 Simplicidad & Paz mental\n📚 Lector empedernido | 🎶 Melómano",
+            "📌 Viviendo aventuras sin guion\n📸 Fotos de momentos felices",
+            "🌟 Creando mi propio camino\n✨ Good energy only"
+        ];
+
+        // Colección de bocetos artísticos a lápiz HD de mujeres y hombres
+        const femaleSketches = [
+            "https://api.dicebear.com/7.x/notionists/png?seed=Ariana&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Bella&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Sophia&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Chloe&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Elena&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Zoe&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Maya&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Kylie&backgroundColor=transparent"
+        ];
+
+        const maleSketches = [
+            "https://api.dicebear.com/7.x/notionists/png?seed=Leo&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Alexander&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Lucas&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Mateo&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Ethan&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Gabriel&backgroundColor=transparent",
+            "https://api.dicebear.com/7.x/notionists/png?seed=Julian&backgroundColor=transparent"
+        ];
+
+        let currentAge = 20;
+        let currentFullName = "";
+
+        function getRandomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+        function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        function sanitizeUsername(str) {
+            return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+        }
+
+        function handleImageError(imgElement) {
+            const seed = Math.random().toString(36).substring(7);
+            imgElement.onerror = null;
+            imgElement.src = `https://api.dicebear.com/7.x/notionists/png?seed=${seed}&backgroundColor=transparent`;
+        }
+
+        function calculateDobFromAge(age) {
+            const currentYear = new Date().getFullYear();
+            const birthYear = currentYear - age;
+            const day = getRandomInt(1, 28);
+            const month = getRandomItem(months);
+            return `${day} de ${month} de ${birthYear} (${age} años)`;
+        }
+
+        function recalculateDobOnly() {
+            currentAge = getRandomInt(18, 25);
+            const dobText = calculateDobFromAge(currentAge);
+            document.getElementById('valDob').innerText = dobText;
+
+            const savedIdentity = JSON.parse(localStorage.getItem('savedIdentity') || '{}');
+            savedIdentity.dob = dobText;
+            savedIdentity.age = currentAge;
+            localStorage.setItem('savedIdentity', JSON.stringify(savedIdentity));
+        }
+
+        function generateIdentity() {
+            const isMale = Math.random() > 0.5;
+            const firstName = isMale ? getRandomItem(maleNames) : getRandomItem(femaleNames);
+            const lastName = getRandomItem(lastNames);
+            currentFullName = `${firstName} ${lastName}`;
+
+            currentAge = getRandomInt(18, 25);
+
+            // Obtener imagen PNG limpia según el género y semilla dinámica
+            const list = isMale ? maleSketches : femaleSketches;
+            const baseSketch = getRandomItem(list);
+            const randomSeed = Math.random().toString(36).substring(7);
+            const photoUrl = `${baseSketch}&seed=${randomSeed}`;
+
+            const cleanFirst = sanitizeUsername(firstName);
+            const cleanLast = sanitizeUsername(lastName);
+            const num = getRandomInt(10, 99);
+            const username = `${cleanFirst}.${cleanLast}${num}`;
+            const bio = getRandomItem(humanBios);
+            const dob = calculateDobFromAge(currentAge);
+
+            const identity = { fullName: currentFullName, photoUrl, username, bio, dob, age: currentAge };
+
+            localStorage.setItem('savedIdentity', JSON.stringify(identity));
+            renderIdentity(identity);
+        }
+
+        function renderIdentity(identity) {
+            currentFullName = identity.fullName || "";
+            currentAge = identity.age || getRandomInt(18, 25);
+            
+            const avatarImg = document.getElementById('valAvatar');
+            avatarImg.src = identity.photoUrl;
+
+            document.getElementById('valName').innerText = identity.fullName;
+            document.getElementById('valUsername').innerText = identity.username;
+            document.getElementById('valBio').innerText = identity.bio;
+            document.getElementById('valDob').innerText = identity.dob;
+        }
+
+        function loadSavedIdentity() {
+            const savedData = localStorage.getItem('savedIdentity');
+            if (savedData) {
+                renderIdentity(JSON.parse(savedData));
+            } else {
+                generateIdentity();
+            }
+        }
+
+        function copyField(elementId, btnElement) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            if (!textToCopy || textToCopy.includes("Cargando")) return;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = btnElement.innerHTML;
+                btnElement.innerHTML = "✅";
+                setTimeout(() => { btnElement.innerHTML = originalText; }, 1200);
+            });
+        }
+
+        function copyAll() {
+            const name = document.getElementById('valName').innerText;
+            const username = document.getElementById('valUsername').innerText;
+            const bio = document.getElementById('valBio').innerText;
+
+            if (name.includes("Cargando")) return;
+
+            const fullText = `Nombre: ${name}\nUsuario: ${username}\nBiografía:\n${bio}`;
+
+            navigator.clipboard.writeText(fullText).then(() => {
+                const btnCopyAll = document.getElementById('btnCopyAll');
+                btnCopyAll.innerHTML = "✅ ¡Perfil Copiado!";
+                setTimeout(() => { btnCopyAll.innerHTML = "📋 Copiar Perfil Completo"; }, 1500);
+            });
+        }
+
+        window.onload = loadSavedIdentity;
+    </script>
+</body>
+</html>
