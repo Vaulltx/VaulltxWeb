@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vaulltx Sketch Art</title>
+    <title>Vaulltx Nature Profiles HD</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --card-border: #333333;
-            --text-main: #f5f5f5;
-            --text-muted: #a0a0a0;
-            --input-bg: #121212;
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --card-border: #30363d;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --input-bg: #0d1117;
+            --accent: #2ea043;
+            --accent-hover: #3fb950;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
@@ -33,7 +35,7 @@
 
         .container {
             width: 100%;
-            max-width: 450px;
+            max-width: 460px;
             margin: 0 auto;
         }
 
@@ -59,29 +61,28 @@
             border: 1px solid var(--card-border);
             border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .sketch-frame {
+        .photo-frame {
             width: 100%;
             height: 380px;
-            background-color: #f0efe9;
+            background-color: #010409;
             border-radius: 12px;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             margin-bottom: 20px;
-            border: 1px solid #444;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.15);
+            border: 1px solid var(--card-border);
             position: relative;
         }
 
-        .sketch-img {
+        .photo-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(100%) contrast(125%) brightness(95%);
+            transition: opacity 0.3s ease;
         }
 
         .field-group {
@@ -117,7 +118,7 @@
 
         .field-value.bio {
             white-space: pre-line;
-            line-height: 1.35;
+            line-height: 1.4;
             font-size: 0.9rem;
         }
 
@@ -155,15 +156,15 @@
         }
 
         .btn-generate {
-            background-color: #ffffff;
-            color: #000000;
+            background-color: var(--accent);
+            color: #ffffff;
             padding: 12px 18px;
             border-radius: 8px;
             font-size: 1rem;
         }
 
         .btn-generate:hover {
-            background-color: #e0e0e0;
+            background-color: var(--accent-hover);
         }
 
         .btn-copy-all {
@@ -184,18 +185,18 @@
 
     <div class="container">
         <header>
-            <h1>Vaulltx Pencil Sketch</h1>
-            <p>Retratos a lápiz y grafito hechos a mano</p>
+            <h1>Vaulltx Nature & People</h1>
+            <p>Generador dinámico de fotos reales y biografías únicas</p>
         </header>
 
         <main class="card">
             
-            <div class="sketch-frame">
-                <img id="valAvatar" class="sketch-img" src="" alt="Dibujo a Lápiz" onerror="handleImageError(this)">
+            <div class="photo-frame">
+                <img id="valAvatar" class="photo-img" src="" alt="Foto en la naturaleza" onerror="handleImageError(this)">
             </div>
 
             <div class="field-group">
-                <span class="field-label">Nombre del Personaje</span>
+                <span class="field-label">Nombre del Perfil</span>
                 <div class="field-content">
                     <span class="field-value" id="valName">Cargando...</span>
                     <button class="btn-copy" onclick="copyField('valName', this)">📋</button>
@@ -203,7 +204,7 @@
             </div>
 
             <div class="field-group">
-                <span class="field-label">Usuario Sugerido</span>
+                <span class="field-label">Usuario Instagram</span>
                 <div class="field-content">
                     <span class="field-value" id="valUsername">Cargando...</span>
                     <button class="btn-copy" onclick="copyField('valUsername', this)">📋</button>
@@ -211,7 +212,7 @@
             </div>
 
             <div class="field-group">
-                <span class="field-label">Biografía Artística</span>
+                <span class="field-label">Biografía Dinámica</span>
                 <div class="field-content">
                     <span class="field-value bio" id="valBio">Cargando...</span>
                     <button class="btn-copy" onclick="copyField('valBio', this)">📋 Copiar Bio</button>
@@ -219,7 +220,7 @@
             </div>
 
             <div class="actions">
-                <button class="btn-generate" onclick="generateIdentity()">✏️ Generar Dibujo a Lápiz</button>
+                <button class="btn-generate" onclick="generateIdentity()">🌲 Generar Nueva Foto & Bio</button>
                 <button class="btn-copy-all" id="btnCopyAll" onclick="copyAll()">📋 Copiar Perfil Completo</button>
             </div>
 
@@ -227,39 +228,79 @@
     </div>
 
     <script>
-        const names = ["Ariana", "Valeria", "Camila", "Sofia", "Elena", "Isabella", "Maya", "Clara", "Lucía", "Abril"];
-        const lastNames = ["González", "López", "Martínez", "Pérez", "Torres", "Ruiz", "García", "Hernández", "Castro", "Vargas"];
+        // Gran base de datos de nombres y apellidos
+        const firstNames = ["Valeria", "Camila", "Sofia", "Elena", "Isabella", "Maya", "Mateo", "Lucas", "Gabriel", "Adrian", "Daniela", "Aarav", "Aaliyah", "Siddharth", "Oliver", "Emma", "Liam", "Mia", "Noah", "Charlotte", "Ethan", "Amara", "Carlos", "Renata", "Joaquín", "Lucía", "Thiago", "Valentina"];
+        const lastNames = ["González", "López", "Martínez", "Pérez", "Torres", "Ruiz", "García", "Hernández", "Castro", "Vargas", "Sharma", "Singh", "Patel", "Silva", "Mendoza", "Romero", "Navarro", "Morales"];
 
-        const bios = [
-            "✍️ Bocetos a lápiz y grafito.\n📍 Arte de retrato en papel.",
-            "🎨 Ilustración tradicional & Sketching.\nCapturando expresiones a mano.",
-            "✏️ Trazos suaves, sombras y textura de papel.\nCuaderno de dibujo personal."
+        // Generador de descripciones variadas mezclando frases
+        const bioIntros = [
+            "🌲 Amante del aire libre y los bosques profundos.",
+            "🍃 Respirando aire puro entre montañas y árboles.",
+            "📸 Capturando la magia de la naturaleza día a día.",
+            "🌿 Perdiéndome en senderos verdes para encontrar paz.",
+            "🏔️ Explorador/a de paisajes y rincones naturales.",
+            "🏕️ Viviendo sin prisa, rodeado/a de pinos y senderos.",
+            "✨ Buscando amaneceres y la mejor luz del bosque."
         ];
 
-        // Lista de semillas garantizadas que cargan siempre sin errores
-        const seeds = ["sketch_girl_1", "portrait_pencil_2", "art_drawing_3", "sketch_girl_4", "pencil_art_5", "drawing_girl_6"];
+        const bioDetails = [
+            "📍 Rutas de senderismo, fotografía & aventuras.",
+            "☕ Café caliente, cámara lista y buena caminata.",
+            "🗺️ Viajando ligero y apreciando la vegetación.",
+            "🧭 Respeto por la naturaleza y la vida silvestre.",
+            "🌱 Desconectando del ruido para reconectar con la tierra.",
+            "📷 Enfocando en los pequeños detalles del paisaje."
+        ];
+
+        const bioOutros = [
+            "💫 Vivir el presente.",
+            "🌿 Siempre en movimiento.",
+            "🍃 Deja solo huellas.",
+            "☀️ Siempre persiguiendo la luz.",
+            "🌲 Un día a la vez.",
+            "✨ Naturaleza en su estado puro."
+        ];
+
+        const userPrefixes = ["wild", "forest", "nature", "green", "outdoor", "hike", "tree", "explore", "wander", "path"];
 
         function getRandomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
         function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
+        function generateUniqueBio() {
+            return `${getRandomItem(bioIntros)}\n${getRandomItem(bioDetails)}\n${getRandomItem(bioOutros)}`;
+        }
+
         function handleImageError(imgElement) {
             imgElement.onerror = null;
-            // Fallback con renderizado SVG inline por si hay problemas de red
-            imgElement.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100%' height='100%' fill='%23f0efe9'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='6' fill='%23666'>✏️ Dibujo a lápiz</text></svg>";
+            // Fallback con parámetro único
+            imgElement.src = "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=80";
         }
 
         function generateIdentity() {
-            const firstName = getRandomItem(names);
+            const firstName = getRandomItem(firstNames);
             const lastName = getRandomItem(lastNames);
             const fullName = `${firstName} ${lastName}`;
-            const username = `${firstName.toLowerCase()}_sketch${getRandomInt(10, 99)}`;
-            const bio = getRandomItem(bios);
+            
+            // Nombre de usuario variado
+            const prefix = getRandomItem(userPrefixes);
+            const cleanName = firstName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const username = `${cleanName}_${prefix}${getRandomInt(10, 999)}`;
 
-            // Generador dinámico de alta disponibilidad con estilos de líneas finas estilo boceto
-            const randomSeed = getRandomItem(seeds) + "_" + Math.floor(Math.random() * 10000);
-            const sketchUrl = `https://api.dicebear.com/7.x/open-peeps/svg?seed=${randomSeed}&maskProbability=0&face=smile,cute,awe,serious`;
+            // Biografía generada dinámicamente
+            const bio = generateUniqueBio();
 
-            document.getElementById('valAvatar').src = sketchUrl;
+            // API dinámica: Genera una fotografía REAL diferente cada vez usando semillas aleatorias
+            const randomSeed = Math.floor(Math.random() * 100000);
+            const photoUrl = `https://picsum.photos/seed/${randomSeed}/600/800`;
+
+            const avatarImg = document.getElementById('valAvatar');
+            avatarImg.style.opacity = '0.3';
+            avatarImg.src = photoUrl;
+            
+            avatarImg.onload = function() {
+                avatarImg.style.opacity = '1';
+            };
+
             document.getElementById('valName').innerText = fullName;
             document.getElementById('valUsername').innerText = username;
             document.getElementById('valBio').innerText = bio;
